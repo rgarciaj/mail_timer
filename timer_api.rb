@@ -9,6 +9,7 @@ require_relative 'lib/gif_timer'
 
 get '/api/timer.gif' do
   type = request.env["rack.request.query_hash"]["type"]
+  show_days = request.env["rack.request.query_hash"]["show_days"]
   date = request.env["rack.request.query_hash"]["date"]
   plus = request.env["rack.request.query_hash"]["plus"]
   y = request.env["rack.request.query_hash"]["year"]
@@ -16,6 +17,8 @@ get '/api/timer.gif' do
   d = request.env["rack.request.query_hash"]["day"]
   hh = request.env["rack.request.query_hash"]["hour"]
   mm = request.env["rack.request.query_hash"]["minute"]
+
+  if show_days == "0" then show_days = false else show_days = true end
 
   if type == "dolar" then
     end_time = DateTime.parse(date)
@@ -36,7 +39,7 @@ get '/api/timer.gif' do
 
   # round to nearest minute for caching
   rounded_time_difference = ((time_difference/60) * 60)
-  gif = GifTimer::Gif.find_or_create(rounded_time_difference)
+  gif = GifTimer::Gif.find_or_create(rounded_time_difference, show_days)
 
   send_file(gif.path, filename: "timer.gif", type: 'image/gif', disposition: :inline)
 
