@@ -6,14 +6,18 @@ require 'rubygems'
 require 'sinatra'
 require_relative 'lib/gif_timer'
 
-$pwd = ENV['PWD']
-
 get '/api/timer.gif' do
-  end_time_ms_since_epoch = request.env["rack.request.query_hash"]["end_time"].to_i
+  y = request.env["rack.request.query_hash"]["year"]
+  m = request.env["rack.request.query_hash"]["month"]
+  d = request.env["rack.request.query_hash"]["day"]
+  hh = request.env["rack.request.query_hash"]["hour"]
+  mm = request.env["rack.request.query_hash"]["minute"]
+
   # generate file for timestamp and store local dir
   start_time = Time.now.to_i
-  end_time = end_time_ms_since_epoch / 1000
-  time_difference =  end_time - start_time
+  # end_time = end_time_ms_since_epoch / 1000
+  end_time = Time.parse(y + "-" + m + "-" + d + " " + hh + ":" + mm).to_i
+  time_difference = end_time - start_time
   if start_time > end_time
     time_difference = 0
     # handle finished timer case
