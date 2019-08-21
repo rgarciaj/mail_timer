@@ -8,6 +8,8 @@ else
   
   if [ "$1" == "start" ]
   then
+    rm ./gifs/*.gif
+    rm tmp/frames/*
     puma -p 3030 -d --pidfile pid
     echo "PID: $(cat ./pid)"
 
