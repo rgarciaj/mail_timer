@@ -6,7 +6,7 @@ module GifTimer
     end
 
     def self.create_gif(frames:, delay:, output_path:)
-      `gm convert -delay #{delay} #{frames.join(' ')} -loop 1 -dispose previous #{output_path}`
+      `gm convert -delay #{delay} #{frames.join(' ')}  -resize 280x93! -loop 1 -dispose previous #{output_path}`
     end
   end
 end
