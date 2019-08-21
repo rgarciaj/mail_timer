@@ -28,7 +28,7 @@ get '/api/timer.gif' do
     puts "-- end_time: #{end_time}"
     end_time = end_time.to_time.to_i
   elsif type.nil? then 
-    end_time = Time.parse(y + "-" + m + "-" + d + " " + hh + ":" + mm,"-04:00").to_i
+    end_time = Time.parse(y + "-" + m + "-" + d + " " + hh + ":" + mm).to_i
   end
 
   # generate file for timestamp and store local dir
