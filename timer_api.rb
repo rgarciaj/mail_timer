@@ -7,33 +7,49 @@ require 'sinatra'
 require 'time'
 require_relative 'lib/gif_timer'
 
-get '/api/timer.gif' do
-  type = request.env["rack.request.query_hash"]["type"]
-  show_days = request.env["rack.request.query_hash"]["show_days"]
-  date = request.env["rack.request.query_hash"]["date"]
-  plus = request.env["rack.request.query_hash"]["plus"]
-  y = request.env["rack.request.query_hash"]["year"]
-  m = request.env["rack.request.query_hash"]["month"]
-  d = request.env["rack.request.query_hash"]["day"]
-  hh = request.env["rack.request.query_hash"]["hour"]
-  mm = request.env["rack.request.query_hash"]["minute"]
+get '/api/timer/:show_days/:year/:month/:day/:hour/:minute' do
+  
+  delete_cache
+
+  show_days = params[:show_days] 
+  y = params[:year] 
+  m = params[:month] 
+  d = params[:day] 
+  hh = params[:hour] 
+  mm = params[:minute] 
+
+  end_time = Time.parse(y + "-" + m + "-" + d + " " + hh + ":" + mm).to_i
+
+  create_timer(end_time, show_days)
+
+end
+
+get '/api/timer/:show_days/:day/:month/:year' do
+
+  delete_cache
+
+  show_days = params[:show_days] 
+  y = params[:year] 
+  m = params[:month] 
+  d = params[:day] 
+
+  end_time = DateTime.parse("#{d}/#{m}/#{y}" + " 00:00:00.0 -0400")
+  puts "-- DateTime.parse: #{end_time}"
+  end_time = end_time + 1 # plus one day
+  end_time = end_time + (8/24.0) # plus 8 hours
+  puts "-- end_time: #{end_time}"
+  end_time = end_time.to_time.to_i
+  
+  create_timer(end_time, show_days)
+  
+end
+
+def create_timer end_time, show_days
 
   if show_days == "0" then show_days = false else show_days = true end
 
-  if type == "dolar" then
-    end_time = DateTime.parse(date + " 00:00:00.0 -0400")
-    puts "-- DateTime.parse: #{end_time}"
-    end_time = end_time + 1 # plus one day
-    end_time = end_time + (8/24.0) # plus 8 hours
-    puts "-- end_time: #{end_time}"
-    end_time = end_time.to_time.to_i
-  elsif type.nil? then 
-    end_time = Time.parse(y + "-" + m + "-" + d + " " + hh + ":" + mm).to_i
-  end
-
   # generate file for timestamp and store local dir
   start_time = Time.now.to_i
-  puts "-- start_time: #{Time.now}"
 
   time_difference = end_time - start_time
   if start_time > end_time
@@ -44,7 +60,11 @@ get '/api/timer.gif' do
   rounded_time_difference = ((time_difference/60) * 60)
   gif = GifTimer::Gif.find_or_create(rounded_time_difference, show_days)
 
-  send_file(gif.path, filename: "timer.gif", type: 'image/gif', disposition: :inline)
+  send_file(gif.path, filename: "timer_#{rand(1000...9999)}.gif", type: 'image/gif', disposition: :inline)
 
 end
 
+def delete_cache
+  # delete cache
+  Dir.glob("gifs/*.gif").select{ |file| File.delete file }
+end
