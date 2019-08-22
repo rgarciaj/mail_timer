@@ -5,7 +5,10 @@
 require 'rubygems'
 require 'sinatra'
 require 'time'
+require 'thwait'
 require_relative 'lib/gif_timer'
+
+$threads = []
 
 get '/api/timer/:show_days/:year/:month/:day/:hour/:minute' do
   
@@ -60,11 +63,11 @@ def create_timer end_time, show_days
   rounded_time_difference = ((time_difference/60) * 60)
   gif = GifTimer::Gif.find_or_create(rounded_time_difference, show_days)
 
-  send_file(gif.path, filename: "timer_#{rand(1000...9999)}.gif", type: 'image/gif', disposition: :inline)
+  send_file(gif.path, filename: "timer.gif", type: 'image/gif', disposition: :inline)
 
 end
 
 def delete_cache
   # delete cache
-  Dir.glob("gifs/*.gif").select{ |file| File.delete file }
+  # Dir.glob("gifs/*.gif").select{ |file| File.delete file }
 end

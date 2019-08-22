@@ -37,7 +37,7 @@ module GifTimer
       add_caption_text
       add_circle
       @canvas.scale!(0.25)
-      @canvas.write("#{@folder}/#{@number}.png")
+      @canvas.write("#{@folder}/#{@number}.jpg")
     end
 
     private

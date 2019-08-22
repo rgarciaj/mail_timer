@@ -5,7 +5,7 @@ module GifTimer
     attr_reader :show_days
     FRAME_FOLDER = "./tmp/frames"
     COMPONENT_FOLDER = "./timer_parts/default"
-    COMPONENT_FORMAT="png"
+    COMPONENT_FORMAT="jpg"
 
     def initialize(time_difference, show_days)
       @time_difference = time_difference
@@ -19,14 +19,16 @@ module GifTimer
     end
 
     def save
-      ImageMagick.combine_images(paths: component_image_paths, output_path: path)
+      $threads << Thread.new {
+        ImageMagick.combine_images(paths: component_image_paths, output_path: path)
+      }
     end
 
     def path
       if show_days then
-        "#{FRAME_FOLDER}/#{file_name}.gif"
+        "#{FRAME_FOLDER}/#{file_name}.jpg"
       else
-        "#{FRAME_FOLDER}/#{file_name}_no_days.gif"
+        "#{FRAME_FOLDER}/#{file_name}_no_days.jpg"
       end
     end
 

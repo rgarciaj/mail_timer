@@ -2,7 +2,7 @@ module GifTimer
   class Gif
     attr_reader :time_difference
     attr_reader :show_days
-    FRAME_COUNT = 60
+    FRAME_COUNT = 120
     FRAME_DELAY = 100
     GIF_FOLDER = "./gifs"
 
@@ -19,6 +19,7 @@ module GifTimer
 
     def save
       frame_paths = frames.map(&:path)
+      ThreadsWait.all_waits(*$threads)
       ImageMagick.create_gif(frames: frame_paths, delay: FRAME_DELAY, output_path: path)
     end
 
